@@ -1,4 +1,4 @@
-# Generating Comments for Social Media Network Post
+# Conditonal Text Generation with GPT-2
 
 ## Datasts:
 
