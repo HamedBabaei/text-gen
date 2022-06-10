@@ -1,0 +1,9 @@
+tqdm
+transformers
+spacy
+argparse
+numpy
+pandas
+torch
+flask
+pathlib
