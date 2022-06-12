@@ -1,14 +1,14 @@
 import numpy as np
 import torch
-from src import get_tokenier, get_model, CommentGeneratorDataset, get_special_tokens
-from src import SpacyNER
+from src import get_tokenier, get_model, get_special_tokens
+# from src import SpacyNER, CommentGeneratorDataset
 
 class TextGenerator:
 
     def __init__(self, model_config, deploy_config):
         self.inf_model = deploy_config.inf_model
-        self.ner_model = SpacyNER(model_name=model_config.spacy_ner_model, 
-                                  ners=model_config.ners)
+        # self.ner_model = SpacyNER(model_name=model_config.spacy_ner_model, 
+        #                           ners=model_config.ners)
         self.device = torch.device('cuda' if deploy_config.cuda else 'cpu')
         self.num_beams = model_config.num_beams
         self.max_length = model_config.max_length
@@ -32,11 +32,11 @@ class TextGenerator:
                                   load_model_path=model_config.path_to_finetuned_model)
 
         self.model.eval()
-
-    def generate(self, text, num_return_sequences=1):
-        ners = self.ner_model.extract(text)
-        ners = CommentGeneratorDataset.join_ners(ners, randomize=False)
-        print("ners:", ners)
+    
+    def generate(self, text, ners, num_return_sequences=1):
+    # def generate(self, text, num_return_sequences=1):
+        # ners = self.ner_model.extract(text)
+        # ners = CommentGeneratorDataset.join_ners(ners, randomize=False)
         if self.inf_model == 'main':
             prompt = text + ' ' + ners
         else:
@@ -60,4 +60,3 @@ class TextGenerator:
             results.append(gen[len(text)+1:])
             # print("{}: {}\n\n".format(i, gen[len(text):]))
         return results
-
