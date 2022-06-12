@@ -1,6 +1,7 @@
 
 def clean_text(text):
     text = text.lower()
+    text = text.replace("'", "")
     return text
 
 def make_generation(generator_model, ner_model, dataset, input_text, database, num_sequences):
