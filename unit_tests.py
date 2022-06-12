@@ -3,7 +3,7 @@ import numpy as np
 import psycopg2
 from configuration import ModelConfig, DeployConfig
 from generator import TextGenerator
-from src import SpacyNER
+from src import SpacyNER, CommentGeneratorDataset
 import keys
 
 model_config = ModelConfig().get_args()
@@ -16,7 +16,9 @@ class TestDataHandlerMethods(unittest.TestCase):
     def test_text_generator(self):
         print("test text generator")
         text = "trump posthumously pardons boxer jack johnson"
-        result = model.generate(text, 3)
+        ners = ner_model.extract(text)
+        ners = CommentGeneratorDataset.join_ners(ners, randomize=False)
+        result = model.generate(text=text, ners=ners, num_return_sequences=3)
         self.assertEqual(len(result), 3)
 
     def test_deploy_model_config(self):
@@ -30,13 +32,13 @@ class TestDataHandlerMethods(unittest.TestCase):
         ners = ner_model.extract(text)
         self.assertEqual(len(ners), 1)    
     
-    def test_db(self):
+    def test_db_connection(self):
         print("test db connection")
         conn = psycopg2.connect(database=keys.DATABASE, 
                                 user=keys.USER, 
                                 password=keys.PASSWORD, 
-                                host='127.0.0.1', 
-                                port='5432')
+                                host=keys.HOST, 
+                                port=keys.PORT)
         cursor = conn.cursor()
         cursor.execute("select version()")
         data = cursor.fetchone()
@@ -45,3 +47,6 @@ class TestDataHandlerMethods(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+# add unittest for database as well
