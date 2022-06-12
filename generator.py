@@ -1,14 +1,21 @@
+"""
+    Text Generation Interface to Generate Text Based on 
+    1) Raw GPT-2 or 2) Finetuned Model
+"""
 import numpy as np
 import torch
 from src import get_tokenier, get_model, get_special_tokens
-# from src import SpacyNER, CommentGeneratorDataset
+
 
 class TextGenerator:
-
+    """
+        Text Generator Interface
+    """
     def __init__(self, model_config, deploy_config):
+        """
+            Initalize TextGenerator Requirenments
+        """
         self.inf_model = deploy_config.inf_model
-        # self.ner_model = SpacyNER(model_name=model_config.spacy_ner_model, 
-        #                           ners=model_config.ners)
         self.device = torch.device('cuda' if deploy_config.cuda else 'cpu')
         self.num_beams = model_config.num_beams
         self.max_length = model_config.max_length
@@ -34,9 +41,9 @@ class TextGenerator:
         self.model.eval()
     
     def generate(self, text, ners, num_return_sequences=1):
-    # def generate(self, text, num_return_sequences=1):
-        # ners = self.ner_model.extract(text)
-        # ners = CommentGeneratorDataset.join_ners(ners, randomize=False)
+        """
+            Generate Texts
+        """
         if self.inf_model == 'main':
             prompt = text + ' ' + ners
         else:
@@ -58,5 +65,4 @@ class TextGenerator:
         for i, sample_output in enumerate(sample_outputs):
             gen = self.tokenizer.decode(sample_output, skip_special_tokens=True)
             results.append(gen[len(text)+1:])
-            # print("{}: {}\n\n".format(i, gen[len(text):]))
         return results

@@ -1,15 +1,23 @@
+"""
+    Dataset Builder for Training Manual Conditoinal Generation Model
+"""
 from datahandler import DataReader, DataWriter
 from configuration import DataConfig, ModelConfig
 import json
 from src import SpacyNER
 from tqdm import tqdm
 
+
 def get_news_category_examples(file_path):
+    """
+        Loading news category dataset examples
+    """
     with open(file_path, encoding="utf-8") as json_lines_file:
         data = []
         for line in json_lines_file:
             data.append(json.loads(line))
     return data
+
 
 if __name__ == '__main__':
     DATA_CONFIG = DataConfig().get_args()

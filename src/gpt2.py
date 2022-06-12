@@ -1,8 +1,17 @@
+"""
+    GPT-2 Methods
+"""
 import torch
-from transformers import AutoTokenizer, AutoConfig, AutoModelForPreTraining
-from torch.utils.data import Dataset, random_split, DataLoader, \
-                             RandomSampler, SequentialSampler
+from transformers import (AutoTokenizer, 
+                          AutoConfig, 
+                          AutoModelForPreTraining)
+from torch.utils.data import (Dataset, 
+                              random_split, 
+                              DataLoader,
+                              RandomSampler, 
+                              SequentialSampler)
 import random
+
 
 SPECIAL_TOKENS  = { "bos_token": "<|BOS|>",
                     "eos_token": "<|EOS|>",
@@ -10,9 +19,20 @@ SPECIAL_TOKENS  = { "bos_token": "<|BOS|>",
                     "pad_token": "<|PAD|>",
                     "sep_token": "<|SEP|>"}
 
-class CommentGeneratorDataset(Dataset):
-    def __init__(self, data, tokenizer, max_length, randomize=True):
+def get_special_tokens():
+    """
+        Return special tokens
+    """
+    return SPECIAL_TOKENS
 
+class CommentGeneratorDataset(Dataset):
+    """
+        GPT2 Comment Generator Dataset
+    """
+    def __init__(self, data, tokenizer, max_length, randomize=True):
+        """
+            Initialize Dataset Class
+        """
         self.title = data['title'].tolist()
         self.desc  = data['description'].tolist()
         self.ners = [eval(ners) for ners in data['ners'].tolist()]
@@ -22,6 +42,9 @@ class CommentGeneratorDataset(Dataset):
 
     @staticmethod
     def join_ners(ners, randomize=True):
+        """
+            Static Method to Join Ners
+        """
         N = len(ners)
         if randomize: 
             M = random.choice(range(N+1))
@@ -30,9 +53,15 @@ class CommentGeneratorDataset(Dataset):
         return ','.join(ners)
 
     def __len__(self):
+        """
+            Get len of dataset
+        """
         return len(self.title)
     
     def __getitem__(self, i):
+        """
+            Get item i from the dataset
+        """
         ners = self.ners[i].copy()
         ners = self.join_ners(ners, self.randomize)
         
@@ -53,14 +82,19 @@ class CommentGeneratorDataset(Dataset):
                 'attention_mask': torch.tensor(attention_mask)}
 
 def get_tokenier(model_path, special_tokens=None):
+    """
+        Load and return the tokenizer with or without special tokens
+    """
     tokenizer = AutoTokenizer.from_pretrained(model_path) 
     if special_tokens:
         tokenizer.add_special_tokens(special_tokens)
-        # print("Special tokens added")
     return tokenizer
 
 
 def get_model(model_path, tokenizer, cuda=False, special_tokens=None, load_model_path=None):
+    """
+        Load Generator Model with adding it to device or loading pretrained ones
+    """
     if special_tokens:
         config = AutoConfig.from_pretrained(model_path, 
                                             bos_token_id=tokenizer.bos_token_id,
@@ -81,6 +115,3 @@ def get_model(model_path, tokenizer, cuda=False, special_tokens=None, load_model
     if cuda:
         model.cuda()
     return model
-
-def get_special_tokens():
-    return SPECIAL_TOKENS

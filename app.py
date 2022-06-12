@@ -1,3 +1,6 @@
+"""
+    API of Text Generation Framework
+"""
 from flask import Flask, request, jsonify, Response
 import json
 from configuration import ModelConfig, DeployConfig
