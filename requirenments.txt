@@ -7,3 +7,6 @@ pandas
 torch
 flask
 pathlib
+psycopg2-binary
+unittest
+pickle
