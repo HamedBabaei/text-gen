@@ -63,6 +63,7 @@ docker-compose up
 http://0.0.0.0:5000/ping
 ```
 If everything was ok you are going to see `testing` text!
+
 8. Now you can use the following post request to get the new texts from text generation model.
 ```url
 http://0.0.0.0:5000/gen-text
