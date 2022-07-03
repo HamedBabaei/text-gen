@@ -1,4 +1,4 @@
-# Conditonal Text Generation with GPT-2
+# Conditional Text Generation with GPT-2
 
 The goal is to generate texts from input texts by detecting entities and generating new text in the condition that uses entities.
 
